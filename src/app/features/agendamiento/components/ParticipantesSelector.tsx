@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import { Input } from '@heroui/react'
 import { useParticipantes } from '../../participantes/hooks/useParticipantes'
 import { useDebounce } from '../../participantes/hooks/useDebounce'
 
@@ -14,20 +15,6 @@ export function ParticipantesSelector({
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 300)
   const { data: participantes, isLoading } = useParticipantes(debouncedSearch)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  // Mantener el foco en el input durante el debounce
-  useEffect(() => {
-    if (inputRef.current && document.activeElement === inputRef.current) {
-      // Si el input tiene el foco, mantenerlo después del debounce
-      const timer = setTimeout(() => {
-        if (inputRef.current && document.activeElement !== inputRef.current) {
-          inputRef.current.focus()
-        }
-      }, 50)
-      return () => clearTimeout(timer)
-    }
-  }, [debouncedSearch])
 
   const toggleParticipante = (id: string) => {
     if (selected.includes(id)) {
@@ -40,13 +27,16 @@ export function ParticipantesSelector({
   return (
     <div className="space-y-3">
       <div>
-        <input
-          ref={inputRef}
+        <Input
           type="text"
           placeholder="Buscar participante por nombre..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          onValueChange={setSearch}
+          radius="lg"
+          classNames={{
+            input: 'text-base',
+            inputWrapper: 'bg-white',
+          }}
         />
       </div>
       {isLoading ? (

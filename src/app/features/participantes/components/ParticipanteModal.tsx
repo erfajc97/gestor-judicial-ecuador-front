@@ -5,7 +5,6 @@ import { useCreateParticipante } from '../mutations/useCreateParticipante'
 import { useUpdateParticipante } from '../mutations/useUpdateParticipante'
 import { TipoParticipante } from '../types'
 import type { CreateParticipanteDto, Participante } from '../types'
-import { ToastResponse } from '@/components/ToastResponse'
 import CustomModalNextUI from '@/components/UI/CustomModalNextUI'
 
 interface ParticipanteModalProps {
@@ -50,18 +49,13 @@ export function ParticipanteModal({
           id: participante.id,
           data: values,
         })
-        ToastResponse('Participante actualizado exitosamente', 'success')
       } else {
         await createMutation.mutateAsync(values)
-        ToastResponse('Participante creado exitosamente', 'success')
       }
       onClose()
     } catch (error) {
       console.error('Error al guardar participante:', error)
-      ToastResponse(
-        'Error al guardar el participante. Por favor, intente nuevamente.',
-        'error',
-      )
+      // El ToastResponse ya se maneja en las mutations
     }
   }
 

@@ -1,15 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import { Input } from '@heroui/react'
 import { useDebounce } from '../hooks/useDebounce'
-import { useDeleteParticipante } from '../mutations/useDeleteParticipante'
 import { useParticipantes } from '../hooks/useParticipantes'
 import { ParticipanteCard } from './ParticipanteCard'
 import { ParticipanteModal } from './ParticipanteModal'
+import { DeleteParticipanteModal } from './DeleteParticipanteModal'
 import type { Participante } from '../types'
 
 export function ParticipanteList() {
   const [search, setSearch] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [editingParticipante, setEditingParticipante] = useState<
+    Participante | undefined
+  >()
+  const [deletingParticipante, setDeletingParticipante] = useState<
     Participante | undefined
   >()
   const debouncedSearch = useDebounce(search, 300)
@@ -18,26 +23,10 @@ export function ParticipanteList() {
     isLoading,
     error,
   } = useParticipantes(debouncedSearch)
-  const deleteMutation = useDeleteParticipante()
-  const inputRef = useRef<HTMLInputElement>(null)
 
-  // Mantener el foco en el input durante el debounce
-  useEffect(() => {
-    if (inputRef.current && document.activeElement === inputRef.current) {
-      // Si el input tiene el foco, mantenerlo después del debounce
-      const timer = setTimeout(() => {
-        if (inputRef.current && document.activeElement !== inputRef.current) {
-          inputRef.current.focus()
-        }
-      }, 50)
-      return () => clearTimeout(timer)
-    }
-  }, [debouncedSearch])
-
-  const handleDelete = async (id: string) => {
-    if (confirm('¿Está seguro de eliminar este participante?')) {
-      await deleteMutation.mutateAsync(id)
-    }
+  const handleDelete = (participante: Participante) => {
+    setDeletingParticipante(participante)
+    setIsDeleteModalOpen(true)
   }
 
   if (isLoading) {
@@ -60,14 +49,17 @@ export function ParticipanteList() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-md p-4">
-        <input
-          ref={inputRef}
+      <div className="bg-white rounded-lg shadow-md p-4">
+        <Input
           type="text"
           placeholder="Buscar por nombre, email o teléfono..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          onValueChange={setSearch}
+          radius="lg"
+          classNames={{
+            input: 'text-base',
+            inputWrapper: 'bg-white',
+          }}
         />
       </div>
 
@@ -94,7 +86,7 @@ export function ParticipanteList() {
                 setEditingParticipante(participante)
                 setIsModalOpen(true)
               }}
-              onDelete={() => handleDelete(participante.id)}
+              onDelete={() => handleDelete(participante)}
             />
           ))}
         </div>
@@ -107,6 +99,13 @@ export function ParticipanteList() {
           setEditingParticipante(undefined)
         }}
         participante={editingParticipante}
+      />
+
+      <DeleteParticipanteModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        participanteId={deletingParticipante?.id}
+        participanteNombre={deletingParticipante?.nombre}
       />
     </div>
   )
