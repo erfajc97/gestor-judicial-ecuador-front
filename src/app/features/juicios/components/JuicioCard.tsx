@@ -18,7 +18,7 @@ export function JuicioCard({ juicio }: JuicioCardProps) {
     <Link
       to="/juicios/$id"
       params={{ id: juicio.id }}
-      className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+      className="block p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-200"
     >
       <div className="flex justify-between items-start mb-4">
         <div>

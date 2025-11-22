@@ -15,9 +15,16 @@ export default function Header() {
         >
           <Menu size={24} />
         </button>
-        <h1 className="ml-4 text-xl font-semibold">
-          <Link to="/">Consejo de la Judicatura</Link>
-        </h1>
+        <div className="ml-4 flex items-center gap-3">
+          <img
+            src="/logo-gj.png"
+            alt="Logo Gestor Judicial"
+            className="h-10 w-auto object-contain"
+          />
+          <h1 className="text-xl font-semibold">
+            <Link to="/">Agendamiento Gestor Judicial</Link>
+          </h1>
+        </div>
       </header>
 
       <aside

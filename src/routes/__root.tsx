@@ -1,6 +1,7 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { HeroUIProvider, ToastProvider } from '@heroui/react'
 
 import Header from '../components/Header'
 
@@ -14,7 +15,8 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
-    <>
+    <HeroUIProvider>
+      <ToastProvider placement="top-right" />
       <Header />
       <Outlet />
       <TanStackDevtools
@@ -29,6 +31,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
           TanStackQueryDevtools,
         ]}
       />
-    </>
+    </HeroUIProvider>
   ),
 })

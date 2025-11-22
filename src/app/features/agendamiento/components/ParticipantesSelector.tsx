@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParticipantes } from '../../participantes/hooks/useParticipantes'
+import { useDebounce } from '../../participantes/hooks/useDebounce'
 
 interface ParticipantesSelectorProps {
   selected: Array<string>
@@ -11,7 +12,22 @@ export function ParticipantesSelector({
   onChange,
 }: ParticipantesSelectorProps) {
   const [search, setSearch] = useState('')
-  const { data: participantes, isLoading } = useParticipantes(search)
+  const debouncedSearch = useDebounce(search, 300)
+  const { data: participantes, isLoading } = useParticipantes(debouncedSearch)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Mantener el foco en el input durante el debounce
+  useEffect(() => {
+    if (inputRef.current && document.activeElement === inputRef.current) {
+      // Si el input tiene el foco, mantenerlo después del debounce
+      const timer = setTimeout(() => {
+        if (inputRef.current && document.activeElement !== inputRef.current) {
+          inputRef.current.focus()
+        }
+      }, 50)
+      return () => clearTimeout(timer)
+    }
+  }, [debouncedSearch])
 
   const toggleParticipante = (id: string) => {
     if (selected.includes(id)) {
@@ -25,11 +41,12 @@ export function ParticipantesSelector({
     <div className="space-y-3">
       <div>
         <input
+          ref={inputRef}
           type="text"
           placeholder="Buscar participante por nombre..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
         />
       </div>
       {isLoading ? (
@@ -39,11 +56,11 @@ export function ParticipantesSelector({
       ) : !participantes || participantes.length === 0 ? (
         <div className="text-gray-500 text-center py-4">
           {search
-            ? 'No se encontraron participantes'
+            ? 'No se encontraron participantes con ese criterio'
             : 'No hay participantes disponibles. Crea participantes primero.'}
         </div>
       ) : (
-        <div className="max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-4">
+        <div className="max-h-64 overflow-y-auto border border-gray-300 rounded-md p-4">
           {participantes.map((participante) => (
             <label
               key={participante.id}

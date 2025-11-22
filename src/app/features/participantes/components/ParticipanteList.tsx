@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from '../hooks/useDebounce'
 import { useDeleteParticipante } from '../mutations/useDeleteParticipante'
 import { useParticipantes } from '../hooks/useParticipantes'
@@ -19,6 +19,20 @@ export function ParticipanteList() {
     error,
   } = useParticipantes(debouncedSearch)
   const deleteMutation = useDeleteParticipante()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Mantener el foco en el input durante el debounce
+  useEffect(() => {
+    if (inputRef.current && document.activeElement === inputRef.current) {
+      // Si el input tiene el foco, mantenerlo después del debounce
+      const timer = setTimeout(() => {
+        if (inputRef.current && document.activeElement !== inputRef.current) {
+          inputRef.current.focus()
+        }
+      }, 50)
+      return () => clearTimeout(timer)
+    }
+  }, [debouncedSearch])
 
   const handleDelete = async (id: string) => {
     if (confirm('¿Está seguro de eliminar este participante?')) {
@@ -44,44 +58,47 @@ export function ParticipanteList() {
     )
   }
 
-  if (!participantes || participantes.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-500 text-lg">
-          No hay participantes registrados
-        </p>
-        <p className="text-gray-400 text-sm mt-2">
-          Crea un nuevo participante para comenzar
-        </p>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="bg-white rounded-2xl shadow-md p-4">
         <input
+          ref={inputRef}
           type="text"
           placeholder="Buscar por nombre, email o teléfono..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {participantes.map((participante) => (
-          <ParticipanteCard
-            key={participante.id}
-            participante={participante}
-            onEdit={() => {
-              setEditingParticipante(participante)
-              setIsModalOpen(true)
-            }}
-            onDelete={() => handleDelete(participante.id)}
-          />
-        ))}
-      </div>
+      {!participantes || participantes.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">
+            {search
+              ? 'No se encontraron participantes con ese criterio'
+              : 'No hay participantes registrados'}
+          </p>
+          <p className="text-gray-400 text-sm mt-2">
+            {search
+              ? 'Intenta con otro término de búsqueda'
+              : 'Crea un nuevo participante para comenzar'}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {participantes.map((participante) => (
+            <ParticipanteCard
+              key={participante.id}
+              participante={participante}
+              onEdit={() => {
+                setEditingParticipante(participante)
+                setIsModalOpen(true)
+              }}
+              onDelete={() => handleDelete(participante.id)}
+            />
+          ))}
+        </div>
+      )}
 
       <ParticipanteModal
         isOpen={isModalOpen}

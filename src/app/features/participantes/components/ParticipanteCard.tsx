@@ -1,9 +1,9 @@
-import type { Participante } from '../types';
+import type { Participante } from '../types'
 
 interface ParticipanteCardProps {
-  participante: Participante;
-  onEdit?: () => void;
-  onDelete?: () => void;
+  participante: Participante
+  onEdit?: () => void
+  onDelete?: () => void
 }
 
 export function ParticipanteCard({
@@ -17,13 +17,15 @@ export function ParticipanteCard({
     ABOGADO_DEFENSOR: 'Abogado Defensor',
     ACUSADO: 'Acusado',
     PERITO: 'Perito',
-  };
+  }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
+    <div className="p-6 bg-white rounded-2xl shadow-md border border-gray-200">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-semibold text-gray-900">{participante.nombre}</h3>
+          <h3 className="text-xl font-semibold text-gray-900">
+            {participante.nombre}
+          </h3>
           <p className="text-sm text-gray-600 mt-1">
             {tipoLabels[participante.tipo] || participante.tipo}
           </p>
@@ -32,7 +34,7 @@ export function ParticipanteCard({
           {onEdit && (
             <button
               onClick={onEdit}
-              className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+              className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
             >
               Editar
             </button>
@@ -40,7 +42,7 @@ export function ParticipanteCard({
           {onDelete && (
             <button
               onClick={onDelete}
-              className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+              className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
             >
               Eliminar
             </button>
@@ -64,11 +66,12 @@ export function ParticipanteCard({
         {participante.telegramChatId && (
           <div className="flex items-center gap-2">
             <span className="font-medium">Telegram ID:</span>
-            <span className="text-xs font-mono">{participante.telegramChatId}</span>
+            <span className="text-xs font-mono">
+              {participante.telegramChatId}
+            </span>
           </div>
         )}
       </div>
     </div>
-  );
+  )
 }
-

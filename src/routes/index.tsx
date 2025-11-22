@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { Link, createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
-});
+})
 
 function HomePage() {
   return (
@@ -19,7 +19,7 @@ function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
         <Link
           to="/juicios"
-          className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+          className="p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-200"
         >
           <div className="text-4xl mb-4">📋</div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Juicios</h2>
@@ -30,10 +30,12 @@ function HomePage() {
 
         <Link
           to="/participantes"
-          className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+          className="p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-200"
         >
           <div className="text-4xl mb-4">👥</div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Participantes</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Participantes
+          </h2>
           <p className="text-gray-600">
             Administrar jueces, abogados, peritos y otros participantes
           </p>
@@ -41,15 +43,13 @@ function HomePage() {
 
         <Link
           to="/agendamiento"
-          className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+          className="p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow border border-gray-200"
         >
           <div className="text-4xl mb-4">➕</div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Agendar</h2>
-          <p className="text-gray-600">
-            Crear un nuevo agendamiento de juicio
-          </p>
+          <p className="text-gray-600">Crear un nuevo agendamiento de juicio</p>
         </Link>
       </div>
     </div>
-  );
+  )
 }
