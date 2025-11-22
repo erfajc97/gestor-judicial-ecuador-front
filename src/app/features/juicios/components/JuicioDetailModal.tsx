@@ -61,10 +61,9 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
       }
       footerContent={
         <Button
-          color="default"
-          variant="light"
           onPress={() => onOpenChange(false)}
           radius="lg"
+          className="bg-gray-800 text-white hover:bg-gray-700"
         >
           Cerrar
         </Button>
@@ -140,11 +139,11 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
               No hay participantes asignados
             </p>
           ) : (
-            <div className="space-y-2">
+            <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
               {juicio.participantes.map((jp) => (
                 <div
                   key={jp.id}
-                  className="p-3 bg-gray-50 rounded-lg border border-gray-200"
+                  className="p-3 bg-gray-50 rounded-2xl border border-gray-200"
                 >
                   <div className="flex items-center justify-between">
                     <div>

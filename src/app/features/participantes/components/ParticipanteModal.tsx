@@ -176,15 +176,14 @@ export function ParticipanteModal({
               color="default"
               variant="light"
               onPress={onClose}
-              radius="full"
+              radius="lg"
             >
               Cancelar
             </Button>
             <Button
-              color="primary"
               type="submit"
-              radius="full"
-              className="h-[2.2rem]"
+              radius="lg"
+              className="h-[2.2rem] bg-gray-800 text-white hover:bg-gray-700"
               isLoading={isLoading}
             >
               {participante ? 'Actualizar' : 'Crear'} Participante

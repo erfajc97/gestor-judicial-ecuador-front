@@ -13,7 +13,7 @@ export function ParticipantesPage() {
         <h1 className="text-3xl font-bold text-gray-900">Participantes</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-6 py-2 bg-gray-800 text-white rounded-2xl hover:bg-gray-700 transition-colors"
         >
           Nuevo Participante
         </button>
