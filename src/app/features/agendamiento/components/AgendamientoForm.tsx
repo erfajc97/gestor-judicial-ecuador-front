@@ -29,7 +29,7 @@ export function AgendamientoForm() {
     try {
       // Asegurar que la fecha esté en formato ISO (YYYY-MM-DD)
       // El input type="date" ya devuelve el formato YYYY-MM-DD
-      const fechaISO = values.fecha || ''
+      let fechaISO = values.fecha || ''
 
       // Validar que la fecha no esté vacía
       if (!fechaISO) {
@@ -37,14 +37,48 @@ export function AgendamientoForm() {
         return
       }
 
+      // Si la fecha viene en formato DD/MM/YYYY, convertirla a YYYY-MM-DD
+      if (fechaISO.includes('/')) {
+        const [day, month, year] = fechaISO.split('/')
+        fechaISO = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      }
+
+      // Validar formato de fecha ISO
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+      if (!dateRegex.test(fechaISO)) {
+        ToastResponse('Formato de fecha inválido. Use YYYY-MM-DD', 'error')
+        return
+      }
+
       const data: AgendamientoData = {
-        ...values,
+        numeroCaso: (values.numeroCaso || '').trim(),
+        tipoJuicio: (values.tipoJuicio || '').trim(),
         fecha: fechaISO,
+        hora: (values.hora || '').trim(),
+        sala: (values.sala || '').trim(),
+        descripcion: values.descripcion ? values.descripcion.trim() : undefined,
         estado: values.estado || EstadoJuicio.PROGRAMADO,
         participantes: selectedParticipantes.map((id) => ({
-          participanteId: id,
+          participanteId: id.trim(),
         })),
       }
+
+      // Validar campos requeridos
+      if (
+        !data.numeroCaso ||
+        !data.tipoJuicio ||
+        !data.fecha ||
+        !data.hora ||
+        !data.sala
+      ) {
+        ToastResponse(
+          'Por favor, complete todos los campos requeridos',
+          'warning',
+        )
+        return
+      }
+
+      console.log('Enviando datos al backend:', JSON.stringify(data, null, 2))
 
       await agendar(data)
       // El ToastResponse ya se maneja en la mutation
@@ -75,8 +109,8 @@ export function AgendamientoForm() {
           estado: EstadoJuicio.PROGRAMADO,
         }}
       >
-        <div className="flex flex-col py-2 sm:py-3">
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-y-2 sm:gap-x-4">
+        <div className="flex flex-col py-1">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-y-1 sm:gap-x-4">
             <Form.Item
               name="numeroCaso"
               rules={[
@@ -174,8 +208,8 @@ export function AgendamientoForm() {
                 placeholder="Ingresa la descripción del juicio"
                 labelPlacement="outside"
                 radius="lg"
-                maxRows={6}
-                minRows={4}
+                maxRows={4}
+                minRows={2}
               />
             </Form.Item>
 
@@ -196,7 +230,7 @@ export function AgendamientoForm() {
               ]}
             >
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Participantes <span className="text-red-500">*</span>
                 </label>
                 <ParticipantesSelector
@@ -204,7 +238,7 @@ export function AgendamientoForm() {
                   onChange={setSelectedParticipantes}
                 />
                 {selectedParticipantes.length > 0 && (
-                  <p className="mt-2 text-sm text-gray-600">
+                  <p className="mt-1 text-sm text-gray-600">
                     {selectedParticipantes.length} participante(s)
                     seleccionado(s)
                   </p>
@@ -213,7 +247,7 @@ export function AgendamientoForm() {
             </Form.Item>
           </div>
 
-          <div className="flex gap-x-2 ml-auto mt-6">
+          <div className="flex gap-x-2 ml-auto mt-4">
             <Button
               color="default"
               variant="light"
