@@ -24,10 +24,12 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
     refetch,
     error,
     isError,
-  } = useJuicio(initialJuicio?.id || '')
+  } = useJuicio(initialJuicio?.id || '', isOpen)
 
-  // Cerrar modal si el juicio fue eliminado (404) y detener polling
+  // Cerrar modal solo si hay error 404 REAL cuando el modal está abierto
   useEffect(() => {
+    if (!isOpen) return // Solo procesar si el modal está abierto
+
     if (isError) {
       const httpError = error as {
         statusCode?: number
@@ -36,33 +38,49 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
       const statusCode = httpError.statusCode || httpError.response?.status
 
       if (statusCode === 404) {
-        // El juicio fue eliminado, cerrar el modal inmediatamente
-        onOpenChange(false)
-        // Eliminar la query del caché para evitar más intentos
+        // El juicio fue eliminado, cerrar el modal y limpiar caché
         queryClient.removeQueries({
           queryKey: juiciosKeys.detail(initialJuicio?.id || ''),
         })
+        onOpenChange(false)
       }
     }
-  }, [isError, error, onOpenChange, initialJuicio?.id, queryClient])
+  }, [isOpen, isError, error, onOpenChange, initialJuicio?.id, queryClient])
 
-  // Polling automático cuando el modal está abierto (solo si no hay error)
+  // Polling automático cuando el modal está abierto
   useEffect(() => {
-    if (!isOpen || !initialJuicio?.id || isError) return
+    if (!isOpen || !initialJuicio?.id) return
 
-    const intervalId = setInterval(() => {
-      // Invalidar y refetch la query del juicio para obtener los estados actualizados
-      queryClient.invalidateQueries({
-        queryKey: juiciosKeys.detail(initialJuicio.id),
-      })
-      refetch().catch((err) => {
-        // Si hay error en el refetch (especialmente 404), detener el polling
-        const httpError = err as { statusCode?: number }
-        if (httpError.statusCode === 404) {
-          clearInterval(intervalId)
-        }
-      })
-    }, 5000) // Refetch cada 5 segundos
+    const juicioId = initialJuicio.id // Guardar el ID para usar dentro del closure
+
+    // Verificar primero si el juicio existe en la lista antes de hacer polling
+    const checkAndPoll = () => {
+      const juicios = queryClient.getQueryData<Array<Juicio>>(
+        juiciosKeys.list(undefined),
+      )
+      const juicioExists = juicios?.some((j) => j.id === juicioId)
+
+      // Si el juicio no está en la lista, no hacer polling
+      if (!juicioExists) {
+        return
+      }
+
+      // Solo hacer refetch si no hay error previo
+      if (!isError) {
+        queryClient.invalidateQueries({
+          queryKey: juiciosKeys.detail(juicioId),
+        })
+        refetch().catch((err) => {
+          // Si hay error 404, detener el polling
+          const httpError = err as { statusCode?: number }
+          if (httpError.statusCode === 404) {
+            // No hacer nada, el useEffect anterior se encargará de cerrar el modal
+          }
+        })
+      }
+    }
+
+    const intervalId = setInterval(checkAndPoll, 5000) // Refetch cada 5 segundos
 
     return () => clearInterval(intervalId)
   }, [isOpen, initialJuicio?.id, queryClient, refetch, isError])

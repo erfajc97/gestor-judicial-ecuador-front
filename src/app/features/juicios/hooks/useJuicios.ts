@@ -5,6 +5,9 @@ export const useJuicios = (search?: string) => {
   return useQuery(juiciosQueries.all(search))
 }
 
-export const useJuicio = (id: string) => {
-  return useQuery(juiciosQueries.detail(id))
+export const useJuicio = (id: string, enabled = true) => {
+  return useQuery({
+    ...juiciosQueries.detail(id),
+    enabled: enabled && !!id,
+  })
 }

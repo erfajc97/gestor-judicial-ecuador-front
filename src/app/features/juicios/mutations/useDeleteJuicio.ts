@@ -9,10 +9,10 @@ export const useDeleteJuicio = () => {
   return useMutation({
     mutationFn: (id: string) => juiciosService.delete(id),
     onSuccess: (_, deletedId) => {
-      // Invalidar la lista de juicios
-      queryClient.invalidateQueries({ queryKey: juiciosKeys.all })
-      // Eliminar la query del detalle del juicio eliminado del caché
+      // Primero eliminar la query del detalle del caché para evitar refetches
       queryClient.removeQueries({ queryKey: juiciosKeys.detail(deletedId) })
+      // Luego invalidar la lista de juicios para actualizar la UI
+      queryClient.invalidateQueries({ queryKey: juiciosKeys.all })
       ToastResponse('Juicio eliminado exitosamente', 'success')
     },
     onError: (error) => {

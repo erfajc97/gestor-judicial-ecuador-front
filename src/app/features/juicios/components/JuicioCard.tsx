@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
-import { juiciosKeys } from '../../../queries/juicios.queries'
+import { useState } from 'react'
 import { JuicioDetailModal } from './JuicioDetailModal'
 import type { Juicio } from '../types'
 
@@ -11,29 +9,6 @@ interface JuicioCardProps {
 
 export function JuicioCard({ juicio, onDelete }: JuicioCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const queryClient = useQueryClient()
-
-  // Cerrar el modal si el juicio fue eliminado (ya no está en la lista)
-  useEffect(() => {
-    if (!isModalOpen) return
-
-    const checkJuicioExists = () => {
-      const juicios = queryClient.getQueryData<Array<Juicio>>(
-        juiciosKeys.list(undefined),
-      )
-      const juicioExists = juicios?.some((j) => j.id === juicio.id)
-
-      if (!juicioExists) {
-        // El juicio fue eliminado, cerrar el modal
-        setIsModalOpen(false)
-      }
-    }
-
-    // Verificar periódicamente si el juicio sigue existiendo
-    const interval = setInterval(checkJuicioExists, 1000)
-
-    return () => clearInterval(interval)
-  }, [isModalOpen, juicio.id, queryClient])
   const fecha = new Date(juicio.fecha).toLocaleDateString('es-EC', {
     year: 'numeric',
     month: 'long',
