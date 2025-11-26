@@ -1,13 +1,39 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { juiciosKeys } from '../../../queries/juicios.queries'
 import { JuicioDetailModal } from './JuicioDetailModal'
 import type { Juicio } from '../types'
 
 interface JuicioCardProps {
   juicio: Juicio
+  onDelete?: () => void
 }
 
-export function JuicioCard({ juicio }: JuicioCardProps) {
+export function JuicioCard({ juicio, onDelete }: JuicioCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const queryClient = useQueryClient()
+
+  // Cerrar el modal si el juicio fue eliminado (ya no está en la lista)
+  useEffect(() => {
+    if (!isModalOpen) return
+
+    const checkJuicioExists = () => {
+      const juicios = queryClient.getQueryData<Array<Juicio>>(
+        juiciosKeys.list(undefined),
+      )
+      const juicioExists = juicios?.some((j) => j.id === juicio.id)
+
+      if (!juicioExists) {
+        // El juicio fue eliminado, cerrar el modal
+        setIsModalOpen(false)
+      }
+    }
+
+    // Verificar periódicamente si el juicio sigue existiendo
+    const interval = setInterval(checkJuicioExists, 1000)
+
+    return () => clearInterval(interval)
+  }, [isModalOpen, juicio.id, queryClient])
   const fecha = new Date(juicio.fecha).toLocaleDateString('es-EC', {
     year: 'numeric',
     month: 'long',
@@ -15,6 +41,13 @@ export function JuicioCard({ juicio }: JuicioCardProps) {
   })
 
   const participantesCount = juicio.participantes?.length || 0
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (onDelete) {
+      onDelete()
+    }
+  }
 
   return (
     <>
@@ -29,19 +62,29 @@ export function JuicioCard({ juicio }: JuicioCardProps) {
             </h3>
             <p className="text-sm text-gray-600 mt-1">{juicio.tipoJuicio}</p>
           </div>
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-medium ${
-              juicio.estado === 'PROGRAMADO'
-                ? 'bg-blue-100 text-blue-800'
-                : juicio.estado === 'EN_CURSO'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : juicio.estado === 'COMPLETADO'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-red-100 text-red-800'
-            }`}
-          >
-            {juicio.estado}
-          </span>
+          <div className="flex gap-2 items-start">
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-medium ${
+                juicio.estado === 'PROGRAMADO'
+                  ? 'bg-blue-100 text-blue-800'
+                  : juicio.estado === 'EN_CURSO'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : juicio.estado === 'COMPLETADO'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+              }`}
+            >
+              {juicio.estado}
+            </span>
+            {onDelete && (
+              <button
+                onClick={handleDeleteClick}
+                className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+              >
+                Eliminar
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="space-y-2 text-sm text-gray-600">

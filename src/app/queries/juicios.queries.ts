@@ -18,5 +18,14 @@ export const juiciosQueries = {
     queryOptions({
       queryKey: juiciosKeys.detail(id),
       queryFn: () => juiciosService.getById(id),
+      retry: (failureCount, error) => {
+        // No reintentar si es un error 404 (juicio no encontrado)
+        const httpError = error as { statusCode?: number }
+        if (httpError.statusCode === 404) {
+          return false
+        }
+        // Reintentar hasta 2 veces para otros errores
+        return failureCount < 2
+      },
     }),
 }

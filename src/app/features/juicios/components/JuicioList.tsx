@@ -3,11 +3,20 @@ import { Input } from '@heroui/react'
 import { useDebounce } from '../../participantes/hooks/useDebounce'
 import { useJuicios } from '../hooks/useJuicios'
 import { JuicioCard } from './JuicioCard'
+import { DeleteJuicioModal } from './DeleteJuicioModal'
+import type { Juicio } from '../types'
 
 export function JuicioList() {
   const [search, setSearch] = useState('')
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [deletingJuicio, setDeletingJuicio] = useState<Juicio | undefined>()
   const debouncedSearch = useDebounce(search, 300)
   const { data: juicios, isLoading, error } = useJuicios(debouncedSearch)
+
+  const handleDelete = (juicio: Juicio) => {
+    setDeletingJuicio(juicio)
+    setIsDeleteModalOpen(true)
+  }
 
   if (isLoading) {
     return (
@@ -59,10 +68,21 @@ export function JuicioList() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {juicios.map((juicio) => (
-            <JuicioCard key={juicio.id} juicio={juicio} />
+            <JuicioCard
+              key={juicio.id}
+              juicio={juicio}
+              onDelete={() => handleDelete(juicio)}
+            />
           ))}
         </div>
       )}
+
+      <DeleteJuicioModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        juicioId={deletingJuicio?.id}
+        juicioNumeroCaso={deletingJuicio?.numeroCaso}
+      />
     </div>
   )
 }

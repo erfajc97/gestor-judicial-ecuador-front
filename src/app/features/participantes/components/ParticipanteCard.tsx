@@ -15,8 +15,9 @@ export function ParticipanteCard({
     JUEZ: 'Juez',
     ABOGADO_DEMANDANTE: 'Abogado Demandante',
     ABOGADO_DEFENSOR: 'Abogado Defensor',
-    ACUSADO: 'Acusado',
-    PERITO: 'Perito',
+    SECRETARIO: 'Secretario',
+    PSICOLOGO: 'Psicólogo',
+    FORENSE: 'Forense',
   }
 
   return (

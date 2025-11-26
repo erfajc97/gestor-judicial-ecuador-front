@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button } from '@heroui/react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useJuicio } from '../hooks/useJuicios'
+import { juiciosKeys } from '../../../queries/juicios.queries'
 import { EstadoJuicio, EstadoNotificacion } from '../types'
 import type { Juicio } from '../types'
 import CustomModalNextUI from '@/components/UI/CustomModalNextUI'
@@ -13,11 +16,71 @@ interface JuicioDetailModalProps {
 export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
   isOpen,
   onOpenChange,
-  juicio,
+  juicio: initialJuicio,
 }) => {
-  if (!juicio) return null
+  const queryClient = useQueryClient()
+  const {
+    data: juicio,
+    refetch,
+    error,
+    isError,
+  } = useJuicio(initialJuicio?.id || '')
 
-  const fecha = new Date(juicio.fecha).toLocaleDateString('es-EC', {
+  // Cerrar modal si el juicio fue eliminado (404) y detener polling
+  useEffect(() => {
+    if (isError) {
+      const httpError = error as {
+        statusCode?: number
+        response?: { status?: number }
+      }
+      const statusCode = httpError.statusCode || httpError.response?.status
+
+      if (statusCode === 404) {
+        // El juicio fue eliminado, cerrar el modal inmediatamente
+        onOpenChange(false)
+        // Eliminar la query del caché para evitar más intentos
+        queryClient.removeQueries({
+          queryKey: juiciosKeys.detail(initialJuicio?.id || ''),
+        })
+      }
+    }
+  }, [isError, error, onOpenChange, initialJuicio?.id, queryClient])
+
+  // Polling automático cuando el modal está abierto (solo si no hay error)
+  useEffect(() => {
+    if (!isOpen || !initialJuicio?.id || isError) return
+
+    const intervalId = setInterval(() => {
+      // Invalidar y refetch la query del juicio para obtener los estados actualizados
+      queryClient.invalidateQueries({
+        queryKey: juiciosKeys.detail(initialJuicio.id),
+      })
+      refetch().catch((err) => {
+        // Si hay error en el refetch (especialmente 404), detener el polling
+        const httpError = err as { statusCode?: number }
+        if (httpError.statusCode === 404) {
+          clearInterval(intervalId)
+        }
+      })
+    }, 5000) // Refetch cada 5 segundos
+
+    return () => clearInterval(intervalId)
+  }, [isOpen, initialJuicio?.id, queryClient, refetch, isError])
+
+  // Usar el juicio actualizado si está disponible, sino el inicial
+  const juicioToDisplay = juicio || initialJuicio
+
+  // Si hay error 404, no mostrar nada (el modal se cerrará automáticamente)
+  if (isError) {
+    const httpError = error as { statusCode?: number }
+    if (httpError.statusCode === 404) {
+      return null
+    }
+  }
+
+  if (!juicioToDisplay) return null
+
+  const fecha = new Date(juicioToDisplay.fecha).toLocaleDateString('es-EC', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -52,10 +115,10 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
           </h2>
           <span
             className={`px-3 py-1 rounded-full text-xs font-medium ${getEstadoColor(
-              juicio.estado,
+              juicioToDisplay.estado,
             )}`}
           >
-            {juicio.estado}
+            {juicioToDisplay.estado}
           </span>
         </div>
       }
@@ -77,7 +140,7 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
               Número de Caso
             </label>
             <p className="mt-1 text-lg font-semibold text-gray-900">
-              {juicio.numeroCaso}
+              {juicioToDisplay.numeroCaso}
             </p>
           </div>
 
@@ -86,7 +149,7 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
               Tipo de Juicio
             </label>
             <p className="mt-1 text-lg font-semibold text-gray-900">
-              {juicio.tipoJuicio}
+              {juicioToDisplay.tipoJuicio}
             </p>
           </div>
 
@@ -98,33 +161,33 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
           <div>
             <label className="text-sm font-medium text-gray-500">Hora</label>
             <p className="mt-1 text-lg font-semibold text-gray-900">
-              {juicio.hora}
+              {juicioToDisplay.hora}
             </p>
           </div>
 
           <div>
             <label className="text-sm font-medium text-gray-500">Sala</label>
             <p className="mt-1 text-lg font-semibold text-gray-900">
-              {juicio.sala}
+              {juicioToDisplay.sala}
             </p>
           </div>
 
           <div>
             <label className="text-sm font-medium text-gray-500">Estado</label>
             <p className="mt-1 text-lg font-semibold text-gray-900">
-              {juicio.estado}
+              {juicioToDisplay.estado}
             </p>
           </div>
         </div>
 
         {/* Descripción */}
-        {juicio.descripcion && (
+        {juicioToDisplay.descripcion && (
           <div>
             <label className="text-sm font-medium text-gray-500">
               Descripción
             </label>
             <p className="mt-1 text-gray-700 whitespace-pre-wrap">
-              {juicio.descripcion}
+              {juicioToDisplay.descripcion}
             </p>
           </div>
         )}
@@ -132,17 +195,18 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
         {/* Participantes */}
         <div>
           <label className="text-sm font-medium text-gray-500 mb-3 block">
-            Participantes ({juicio.participantes?.length || 0})
+            Participantes ({juicioToDisplay.participantes?.length || 0})
           </label>
-          {!juicio.participantes || juicio.participantes.length === 0 ? (
+          {!juicioToDisplay.participantes ||
+          juicioToDisplay.participantes.length === 0 ? (
             <p className="text-gray-500 italic">
               No hay participantes asignados
             </p>
           ) : (
             <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
-              {juicio.participantes.map((jp) => {
+              {juicioToDisplay.participantes.map((jp) => {
                 // Buscar notificación para este participante
-                const notificacion = juicio.notificaciones?.find(
+                const notificacion = juicioToDisplay.notificaciones?.find(
                   (n) => n.participanteId === jp.participante.id,
                 )
 
@@ -213,7 +277,10 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
                     )}
                     {notificacion?.fechaLectura && (
                       <p className="text-xs text-gray-400 mt-1">
-                        Leído: {new Date(notificacion.fechaLectura).toLocaleString('es-EC')}
+                        Leído:{' '}
+                        {new Date(notificacion.fechaLectura).toLocaleString(
+                          'es-EC',
+                        )}
                       </p>
                     )}
                   </div>
@@ -228,11 +295,11 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
           <div className="grid grid-cols-2 gap-4 text-xs text-gray-500">
             <div>
               <span className="font-medium">Creado:</span>{' '}
-              {new Date(juicio.createdAt).toLocaleString('es-EC')}
+              {new Date(juicioToDisplay.createdAt).toLocaleString('es-EC')}
             </div>
             <div>
               <span className="font-medium">Actualizado:</span>{' '}
-              {new Date(juicio.updatedAt).toLocaleString('es-EC')}
+              {new Date(juicioToDisplay.updatedAt).toLocaleString('es-EC')}
             </div>
           </div>
         </div>

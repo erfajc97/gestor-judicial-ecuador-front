@@ -100,8 +100,9 @@ export function ParticipanteForm({
             <option value={TipoParticipante.ABOGADO_DEFENSOR}>
               Abogado Defensor
             </option>
-            <option value={TipoParticipante.ACUSADO}>Acusado</option>
-            <option value={TipoParticipante.PERITO}>Perito</option>
+            <option value={TipoParticipante.SECRETARIO}>Secretario</option>
+            <option value={TipoParticipante.PSICOLOGO}>Psicólogo</option>
+            <option value={TipoParticipante.FORENSE}>Forense</option>
           </select>
         </div>
 

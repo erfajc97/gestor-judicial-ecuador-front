@@ -70,8 +70,9 @@ export function ParticipanteModal({
     { label: 'Juez', value: TipoParticipante.JUEZ },
     { label: 'Abogado Demandante', value: TipoParticipante.ABOGADO_DEMANDANTE },
     { label: 'Abogado Defensor', value: TipoParticipante.ABOGADO_DEFENSOR },
-    { label: 'Acusado', value: TipoParticipante.ACUSADO },
-    { label: 'Perito', value: TipoParticipante.PERITO },
+    { label: 'Secretario', value: TipoParticipante.SECRETARIO },
+    { label: 'Psicólogo', value: TipoParticipante.PSICOLOGO },
+    { label: 'Forense', value: TipoParticipante.FORENSE },
   ]
 
   return (

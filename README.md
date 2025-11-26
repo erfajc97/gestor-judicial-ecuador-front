@@ -1,301 +1,252 @@
-Welcome to your new TanStack app! 
+# Gestor de Agendamiento Judicial - Frontend
 
-# Getting Started
+Aplicación web React para la gestión de agendamiento judicial con interfaz moderna y responsive.
 
-To run this application:
+## 📋 Descripción
+
+Frontend desarrollado con React y TanStack Router que permite gestionar juicios, participantes y visualizar el estado de notificaciones en tiempo real. La aplicación se conecta con el backend API para realizar operaciones CRUD y mostrar información actualizada mediante polling automático.
+
+## 🏗️ Arquitectura
+
+El proyecto sigue una arquitectura basada en features y utiliza TanStack Router para el enrutamiento:
+
+- **Arquitectura por features:**
+  - `juicios` - Gestión de juicios (listado, creación, edición, eliminación)
+  - `participantes` - Gestión de participantes
+  - `agendamiento` - Formulario de agendamiento rápido
+  - `auditoria` - Visualización de eventos y errores del sistema
+
+- **Estructura de carpetas:**
+
+```
+src/
+├── app/
+│   ├── api/                    # Configuración de API (axios, endpoints)
+│   ├── features/               # Módulos de funcionalidades
+│   │   ├── juicios/
+│   │   │   ├── components/     # Componentes específicos
+│   │   │   ├── hooks/         # Custom hooks
+│   │   │   ├── mutations/     # Mutaciones (create, update, delete)
+│   │   │   ├── services/      # Servicios de API
+│   │   │   └── types/         # Tipos TypeScript
+│   │   ├── participantes/
+│   │   ├── agendamiento/
+│   │   └── auditoria/
+│   └── queries/                # Query keys y configuraciones
+├── components/                 # Componentes compartidos
+│   ├── UI/                     # Componentes de UI reutilizables
+│   ├── Header.tsx
+│   ├── BackButton.tsx
+│   └── ToastResponse.tsx
+├── routes/                     # Rutas (TanStack Router)
+└── integrations/              # Integraciones (TanStack Query)
+```
+
+## 🛠️ Tecnologías y Librerías
+
+### Dependencias principales:
+
+- **React** (^19.2.0) - Biblioteca UI
+- **@tanstack/react-router** (^1.132.0) - Enrutamiento
+- **@tanstack/react-query** (^5.66.5) - Gestión de estado del servidor y caché
+- **@heroui/react** (^2.8.5) - Componentes UI modernos
+- **axios** (^1.13.2) - Cliente HTTP
+- **tailwindcss** (^4.0.6) - Framework CSS utility-first
+- **antd** (^6.0.0) - Componentes adicionales (formularios)
+- **lucide-react** (^0.545.0) - Iconos
+- **vite** (^7.1.7) - Build tool y dev server
+
+### Desarrollo:
+
+- **TypeScript** (^5.7.2) - Tipado estático
+- **Vitest** (^3.0.5) - Testing
+- **ESLint + Prettier** - Linting y formateo
+
+## 🚀 Configuración Inicial
+
+### 1. Instalación
 
 ```bash
 npm install
-npm run start
 ```
 
-# Building For Production
+### 2. Variables de Entorno
 
-To build this application for production:
+Crea un archivo `.env` en la raíz del proyecto:
+
+```env
+VITE_API_URL=http://localhost:3001
+```
+
+En producción, configura la URL del backend API.
+
+### 3. Desarrollo
+
+```bash
+npm run dev
+```
+
+La aplicación estará disponible en `http://localhost:3000`
+
+## 🏗️ Build y Deployment
+
+### Build para Producción
 
 ```bash
 npm run build
 ```
 
-## Testing
+Esto generará los archivos estáticos en la carpeta `dist/`.
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+### Preview del Build
+
+```bash
+npm run serve
+```
+
+### Deployment
+
+Los archivos en `dist/` pueden ser desplegados en cualquier servidor estático:
+
+- **Vercel** - Deploy automático desde Git
+- **Netlify** - Deploy automático desde Git
+- **GitHub Pages** - Deploy manual o con GitHub Actions
+- **Servidor propio** - Subir archivos `dist/` a tu servidor web
+
+**Nota:** Asegúrate de configurar la variable `VITE_API_URL` con la URL de tu backend en producción.
+
+## 📜 Scripts Disponibles
+
+| Script           | Descripción                                 |
+| ---------------- | ------------------------------------------- |
+| `npm run dev`    | Inicia servidor de desarrollo (puerto 3000) |
+| `npm run build`  | Compila para producción                     |
+| `npm run serve`  | Preview del build de producción             |
+| `npm run test`   | Ejecuta tests                               |
+| `npm run lint`   | Ejecuta ESLint                              |
+| `npm run format` | Formatea código con Prettier                |
+| `npm run check`  | Formatea y corrige con ESLint               |
+
+## 🎨 Características Principales
+
+### Gestión de Juicios
+
+- Listado con búsqueda en tiempo real
+- Creación y edición de juicios
+- Eliminación con confirmación
+- Modal de detalles con información completa
+- Visualización de estados de notificaciones por participante
+- Polling automático para actualizar estados (cada 5 segundos)
+
+### Gestión de Participantes
+
+- Listado con búsqueda
+- CRUD completo de participantes
+- Asignación de tipo (Juez, Abogado, Secretario, Psicólogo, Forense)
+- Vinculación con Telegram Chat ID
+
+### Agendamiento Rápido
+
+- Formulario integrado para crear juicios con participantes
+- Selector múltiple de participantes
+- Validación de campos
+
+### Auditoría
+
+- Visualización de eventos y errores del sistema
+- Filtros por tipo de error y estado
+- Estadísticas de errores
+
+## 🔄 Gestión de Estado
+
+### TanStack Query
+
+El proyecto utiliza TanStack Query para:
+
+- Caché de datos del servidor
+- Sincronización automática
+- Polling para actualizaciones en tiempo real
+- Optimistic updates en mutaciones
+
+### Estructura de Queries
+
+Las queries están organizadas en `src/app/queries/`:
+
+- `juicios.queries.ts` - Queries y keys para juicios
+- `participantes.queries.ts` - Queries y keys para participantes
+
+## 🎯 Rutas Disponibles
+
+| Ruta                        | Descripción                       |
+| --------------------------- | --------------------------------- |
+| `/`                         | Página de inicio                  |
+| `/juicios`                  | Listado de juicios                |
+| `/juicios/nuevo`            | Crear nuevo juicio                |
+| `/juicios/:id`              | Detalles de juicio                |
+| `/participantes`            | Listado de participantes          |
+| `/participantes/nuevo`      | Crear nuevo participante          |
+| `/participantes/:id/editar` | Editar participante               |
+| `/agendamiento`             | Formulario de agendamiento rápido |
+| `/auditoria`                | Visualización de auditoría        |
+
+## 🎨 Componentes UI
+
+### Componentes Propios
+
+- **CustomModalNextUI** - Modal personalizado basado en HeroUI
+- **Header** - Barra de navegación superior
+- **BackButton** - Botón de regreso
+- **ToastResponse** - Notificaciones toast
+
+### Librerías de Componentes
+
+- **HeroUI** - Componentes principales (Button, Input, Modal, etc.)
+- **Ant Design** - Formularios y componentes adicionales
+
+## 🔔 Estados de Notificación
+
+El sistema muestra tres estados de notificación:
+
+- **🟡 Enviado** - Notificación enviada a Telegram
+- **🔵 Entregado** - Confirmado recibido (después de 1 minuto)
+- **🟢 Leído** - Usuario confirmó lectura
+
+Los estados se actualizan automáticamente mediante polling cuando el modal de detalles está abierto.
+
+## 🧪 Testing
 
 ```bash
 npm run test
 ```
 
-## Styling
+El proyecto utiliza Vitest para testing unitario.
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+## 📝 Notas Importantes
 
+- El frontend se conecta al backend en `http://localhost:3001` por defecto
+- Configura `VITE_API_URL` en producción para apuntar a tu backend
+- El polling automático se ejecuta cada 5 segundos cuando hay modales abiertos
+- Los errores 404 (juicio eliminado) cierran automáticamente los modales
+- CORS debe estar configurado en el backend para permitir requests del frontend
 
-## Linting & Formatting
+## 🔧 Desarrollo
 
+### Agregar una Nueva Ruta
 
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
+1. Crea un archivo en `src/routes/` (ej: `mi-ruta.tsx`)
+2. TanStack Router generará automáticamente la ruta
+3. Usa `Link` de `@tanstack/react-router` para navegación
 
-```bash
-npm run lint
-npm run format
-npm run check
-```
+### Agregar una Nueva Feature
 
+1. Crea carpeta en `src/app/features/mi-feature/`
+2. Organiza en: `components/`, `hooks/`, `mutations/`, `services/`, `types/`
+3. Crea queries en `src/app/queries/` si es necesario
 
+### Estilos
 
-## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
+El proyecto usa Tailwind CSS. Los estilos globales están en `src/styles.css`.
 
-### Adding A Route
+### Tipos TypeScript
 
-To add a new route to your application just add another a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-npm install @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-
-import "./App.css";
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
-```bash
-npm install @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
-
-export default App;
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+Los tipos están organizados por feature en `src/app/features/[feature]/types/index.ts`.
