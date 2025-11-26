@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from '@heroui/react'
-import { EstadoJuicio } from '../types'
+import { EstadoJuicio, EstadoNotificacion } from '../types'
 import type { Juicio } from '../types'
 import CustomModalNextUI from '@/components/UI/CustomModalNextUI'
 
@@ -140,38 +140,85 @@ export const JuicioDetailModal: React.FC<JuicioDetailModalProps> = ({
             </p>
           ) : (
             <div className="max-h-64 overflow-y-auto space-y-2 pr-2">
-              {juicio.participantes.map((jp) => (
-                <div
-                  key={jp.id}
-                  className="p-3 bg-gray-50 rounded-2xl border border-gray-200"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        {jp.participante.nombre}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {jp.participante.tipo}
-                      </p>
-                    </div>
-                    {jp.rol && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
-                        {jp.rol}
+              {juicio.participantes.map((jp) => {
+                // Buscar notificación para este participante
+                const notificacion = juicio.notificaciones?.find(
+                  (n) => n.participanteId === jp.participante.id,
+                )
+
+                const getEstadoBadge = (estado?: EstadoNotificacion) => {
+                  if (!estado) {
+                    return (
+                      <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                        ⚪ Sin notificar
                       </span>
+                    )
+                  }
+                  switch (estado) {
+                    case EstadoNotificacion.ENVIADO:
+                      return (
+                        <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">
+                          🟡 Enviado
+                        </span>
+                      )
+                    case EstadoNotificacion.ENTREGADO:
+                      return (
+                        <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
+                          🔵 Entregado
+                        </span>
+                      )
+                    case EstadoNotificacion.LEIDO:
+                      return (
+                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">
+                          🟢 Leído
+                        </span>
+                      )
+                    default:
+                      return null
+                  }
+                }
+
+                return (
+                  <div
+                    key={jp.id}
+                    className="p-3 bg-gray-50 rounded-2xl border border-gray-200"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-semibold text-gray-900">
+                            {jp.participante.nombre}
+                          </p>
+                          {getEstadoBadge(notificacion?.estado)}
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {jp.participante.tipo}
+                        </p>
+                        {jp.rol && (
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs mt-1 inline-block">
+                            {jp.rol}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {jp.participante.email && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {jp.participante.email}
+                      </p>
+                    )}
+                    {jp.participante.telefono && (
+                      <p className="text-xs text-gray-500">
+                        {jp.participante.telefono}
+                      </p>
+                    )}
+                    {notificacion?.fechaLectura && (
+                      <p className="text-xs text-gray-400 mt-1">
+                        Leído: {new Date(notificacion.fechaLectura).toLocaleString('es-EC')}
+                      </p>
                     )}
                   </div>
-                  {jp.participante.email && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      {jp.participante.email}
-                    </p>
-                  )}
-                  {jp.participante.telefono && (
-                    <p className="text-xs text-gray-500">
-                      {jp.participante.telefono}
-                    </p>
-                  )}
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

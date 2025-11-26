@@ -6,6 +6,12 @@ export enum EstadoJuicio {
   REAGENDADO = 'REAGENDADO',
 }
 
+export enum EstadoNotificacion {
+  ENVIADO = 'ENVIADO',
+  ENTREGADO = 'ENTREGADO',
+  LEIDO = 'LEIDO',
+}
+
 export interface Participante {
   id: string;
   nombre: string;
@@ -15,6 +21,22 @@ export interface Participante {
   telegramChatId?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Notificacion {
+  id: string;
+  juicioId: string;
+  participanteId?: string;
+  tipo: string;
+  mensaje: string;
+  enviada: boolean;
+  fechaEnvio?: string;
+  estado: EstadoNotificacion;
+  messageId?: string;
+  fechaEntrega?: string;
+  fechaLectura?: string;
+  createdAt: string;
+  participante?: Participante;
 }
 
 export interface JuicioParticipante {
@@ -38,6 +60,7 @@ export interface Juicio {
   createdAt: string;
   updatedAt: string;
   participantes?: JuicioParticipante[];
+  notificaciones?: Notificacion[];
 }
 
 export interface CreateJuicioDto {

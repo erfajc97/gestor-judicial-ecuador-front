@@ -19,6 +19,7 @@ export function ParticipanteModal({
   participante,
 }: ParticipanteModalProps) {
   const [form] = Form.useForm()
+  const telegramChatId = Form.useWatch('telegramChatId', form)
   const createMutation = useCreateParticipante()
   const updateMutation = useUpdateParticipante()
 
@@ -31,7 +32,7 @@ export function ParticipanteModal({
           email: participante.email || '',
           telefono: participante.telefono || '',
           tipo: participante.tipo,
-          telegramChatId: participante.telegramChatId || '',
+          telegramChatId: participante.telegramChatId ?? '',
         })
       } else {
         form.resetFields()
@@ -163,6 +164,10 @@ export function ParticipanteModal({
                 placeholder="Ingrese el Chat ID de Telegram"
                 labelPlacement="outside"
                 radius="lg"
+                value={telegramChatId ?? ''}
+                onValueChange={(value) => {
+                  form.setFieldValue('telegramChatId', value)
+                }}
               />
               <p className="mt-1 text-xs text-gray-500">
                 El Chat ID se obtiene cuando el usuario inicia conversación con

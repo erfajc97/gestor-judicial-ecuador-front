@@ -22,4 +22,10 @@ export const endpoints = {
   telegram: {
     register: `${API_BASE_URL}/telegram/register`,
   },
+  auditoria: {
+    list: `${API_BASE_URL}/auditoria`,
+    getById: (id: string) => `${API_BASE_URL}/auditoria/${id}`,
+    marcarResuelto: (id: string) => `${API_BASE_URL}/auditoria/${id}/resolver`,
+    estadisticas: `${API_BASE_URL}/auditoria/estadisticas`,
+  },
 } as const

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ParticipantesRouteImport } from './routes/participantes'
 import { Route as JuiciosRouteImport } from './routes/juicios'
+import { Route as AuditoriaRouteImport } from './routes/auditoria'
 import { Route as AgendamientoRouteImport } from './routes/agendamiento'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ParticipantesNuevoRouteImport } from './routes/participantes.nuevo'
@@ -26,6 +27,11 @@ const ParticipantesRoute = ParticipantesRouteImport.update({
 const JuiciosRoute = JuiciosRouteImport.update({
   id: '/juicios',
   path: '/juicios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditoriaRoute = AuditoriaRouteImport.update({
+  id: '/auditoria',
+  path: '/auditoria',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgendamientoRoute = AgendamientoRouteImport.update({
@@ -62,6 +68,7 @@ const ParticipantesIdEditarRoute = ParticipantesIdEditarRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agendamiento': typeof AgendamientoRoute
+  '/auditoria': typeof AuditoriaRoute
   '/juicios': typeof JuiciosRouteWithChildren
   '/participantes': typeof ParticipantesRouteWithChildren
   '/juicios/$id': typeof JuiciosIdRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agendamiento': typeof AgendamientoRoute
+  '/auditoria': typeof AuditoriaRoute
   '/juicios': typeof JuiciosRouteWithChildren
   '/participantes': typeof ParticipantesRouteWithChildren
   '/juicios/$id': typeof JuiciosIdRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agendamiento': typeof AgendamientoRoute
+  '/auditoria': typeof AuditoriaRoute
   '/juicios': typeof JuiciosRouteWithChildren
   '/participantes': typeof ParticipantesRouteWithChildren
   '/juicios/$id': typeof JuiciosIdRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agendamiento'
+    | '/auditoria'
     | '/juicios'
     | '/participantes'
     | '/juicios/$id'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/agendamiento'
+    | '/auditoria'
     | '/juicios'
     | '/participantes'
     | '/juicios/$id'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/agendamiento'
+    | '/auditoria'
     | '/juicios'
     | '/participantes'
     | '/juicios/$id'
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgendamientoRoute: typeof AgendamientoRoute
+  AuditoriaRoute: typeof AuditoriaRoute
   JuiciosRoute: typeof JuiciosRouteWithChildren
   ParticipantesRoute: typeof ParticipantesRouteWithChildren
 }
@@ -144,6 +157,13 @@ declare module '@tanstack/react-router' {
       path: '/juicios'
       fullPath: '/juicios'
       preLoaderRoute: typeof JuiciosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auditoria': {
+      id: '/auditoria'
+      path: '/auditoria'
+      fullPath: '/auditoria'
+      preLoaderRoute: typeof AuditoriaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agendamiento': {
@@ -221,6 +241,7 @@ const ParticipantesRouteWithChildren = ParticipantesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgendamientoRoute: AgendamientoRoute,
+  AuditoriaRoute: AuditoriaRoute,
   JuiciosRoute: JuiciosRouteWithChildren,
   ParticipantesRoute: ParticipantesRouteWithChildren,
 }
