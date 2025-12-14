@@ -1,6 +1,16 @@
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Calendar, FileText, Home, Menu, Scale, Users, X } from 'lucide-react'
+import {
+  BarChart3,
+  BookOpen,
+  Calendar,
+  FileText,
+  Home,
+  Menu,
+  Scale,
+  Users,
+  X,
+} from 'lucide-react'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -107,6 +117,32 @@ export default function Header() {
           >
             <FileText size={20} />
             <span className="font-medium">Auditoría</span>
+          </Link>
+
+          <Link
+            to="/metrics"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors mb-2',
+            }}
+          >
+            <BarChart3 size={20} />
+            <span className="font-medium">Métricas</span>
+          </Link>
+
+          <Link
+            to="/documentation"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            activeProps={{
+              className:
+                'flex items-center gap-3 p-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors mb-2',
+            }}
+          >
+            <BookOpen size={20} />
+            <span className="font-medium">Documentación</span>
           </Link>
         </nav>
       </aside>
