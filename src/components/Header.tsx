@@ -1,7 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
-  BarChart3,
   BookOpen,
   Calendar,
   FileText,
@@ -117,19 +116,6 @@ export default function Header() {
           >
             <FileText size={20} />
             <span className="font-medium">Auditoría</span>
-          </Link>
-
-          <Link
-            to="/metrics"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors mb-2',
-            }}
-          >
-            <BarChart3 size={20} />
-            <span className="font-medium">Métricas</span>
           </Link>
 
           <Link

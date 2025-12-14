@@ -183,29 +183,43 @@ export default function MetricsLatency({ filters }: MetricsLatencyProps) {
               dataKey="p50"
               stroke="#3b82f6"
               name="P50"
-              strokeWidth={2}
+              strokeWidth={3}
+              connectNulls={true}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6 }}
             />
             <Line
               type="monotone"
               dataKey="p95"
-              stroke="#8b5cf6"
+              stroke="#eab308"
               name="P95"
-              strokeWidth={2}
+              strokeWidth={4}
+              strokeDasharray="10 5"
+              connectNulls={true}
+              strokeOpacity={0.9}
+              dot={{ r: 6, fill: '#eab308', strokeWidth: 2 }}
+              activeDot={{ r: 8 }}
             />
             <Line
               type="monotone"
               dataKey="p99"
-              stroke="#6366f1"
+              stroke="#ef4444"
               name="P99"
-              strokeWidth={2}
+              strokeWidth={3}
+              connectNulls={true}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6 }}
             />
             <Line
               type="monotone"
               dataKey="avg"
-              stroke="#6b7280"
+              stroke="#10b981"
               name="Promedio"
               strokeWidth={2}
               strokeDasharray="5 5"
+              connectNulls={true}
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
             />
           </LineChart>
         </ResponsiveContainer>

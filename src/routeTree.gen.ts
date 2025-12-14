@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ParticipantesRouteImport } from './routes/participantes'
-import { Route as MetricsRouteImport } from './routes/metrics'
 import { Route as JuiciosRouteImport } from './routes/juicios'
 import { Route as DocumentationRouteImport } from './routes/documentation'
 import { Route as AuditoriaRouteImport } from './routes/auditoria'
@@ -24,11 +23,6 @@ import { Route as ParticipantesIdEditarRouteImport } from './routes/participante
 const ParticipantesRoute = ParticipantesRouteImport.update({
   id: '/participantes',
   path: '/participantes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MetricsRoute = MetricsRouteImport.update({
-  id: '/metrics',
-  path: '/metrics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JuiciosRoute = JuiciosRouteImport.update({
@@ -83,7 +77,6 @@ export interface FileRoutesByFullPath {
   '/auditoria': typeof AuditoriaRoute
   '/documentation': typeof DocumentationRoute
   '/juicios': typeof JuiciosRouteWithChildren
-  '/metrics': typeof MetricsRoute
   '/participantes': typeof ParticipantesRouteWithChildren
   '/juicios/$id': typeof JuiciosIdRoute
   '/juicios/nuevo': typeof JuiciosNuevoRoute
@@ -96,7 +89,6 @@ export interface FileRoutesByTo {
   '/auditoria': typeof AuditoriaRoute
   '/documentation': typeof DocumentationRoute
   '/juicios': typeof JuiciosRouteWithChildren
-  '/metrics': typeof MetricsRoute
   '/participantes': typeof ParticipantesRouteWithChildren
   '/juicios/$id': typeof JuiciosIdRoute
   '/juicios/nuevo': typeof JuiciosNuevoRoute
@@ -110,7 +102,6 @@ export interface FileRoutesById {
   '/auditoria': typeof AuditoriaRoute
   '/documentation': typeof DocumentationRoute
   '/juicios': typeof JuiciosRouteWithChildren
-  '/metrics': typeof MetricsRoute
   '/participantes': typeof ParticipantesRouteWithChildren
   '/juicios/$id': typeof JuiciosIdRoute
   '/juicios/nuevo': typeof JuiciosNuevoRoute
@@ -125,7 +116,6 @@ export interface FileRouteTypes {
     | '/auditoria'
     | '/documentation'
     | '/juicios'
-    | '/metrics'
     | '/participantes'
     | '/juicios/$id'
     | '/juicios/nuevo'
@@ -138,7 +128,6 @@ export interface FileRouteTypes {
     | '/auditoria'
     | '/documentation'
     | '/juicios'
-    | '/metrics'
     | '/participantes'
     | '/juicios/$id'
     | '/juicios/nuevo'
@@ -151,7 +140,6 @@ export interface FileRouteTypes {
     | '/auditoria'
     | '/documentation'
     | '/juicios'
-    | '/metrics'
     | '/participantes'
     | '/juicios/$id'
     | '/juicios/nuevo'
@@ -165,7 +153,6 @@ export interface RootRouteChildren {
   AuditoriaRoute: typeof AuditoriaRoute
   DocumentationRoute: typeof DocumentationRoute
   JuiciosRoute: typeof JuiciosRouteWithChildren
-  MetricsRoute: typeof MetricsRoute
   ParticipantesRoute: typeof ParticipantesRouteWithChildren
 }
 
@@ -176,13 +163,6 @@ declare module '@tanstack/react-router' {
       path: '/participantes'
       fullPath: '/participantes'
       preLoaderRoute: typeof ParticipantesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/metrics': {
-      id: '/metrics'
-      path: '/metrics'
-      fullPath: '/metrics'
-      preLoaderRoute: typeof MetricsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/juicios': {
@@ -284,7 +264,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuditoriaRoute: AuditoriaRoute,
   DocumentationRoute: DocumentationRoute,
   JuiciosRoute: JuiciosRouteWithChildren,
-  MetricsRoute: MetricsRoute,
   ParticipantesRoute: ParticipantesRouteWithChildren,
 }
 export const routeTree = rootRouteImport

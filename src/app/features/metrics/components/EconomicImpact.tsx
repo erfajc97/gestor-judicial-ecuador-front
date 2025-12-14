@@ -117,10 +117,10 @@ export default function EconomicImpact() {
     ]
   }, [defaults, inputs.annualFailedHearings, inputs.averageCostPerHearing])
 
-  // Datos para gráfico de líneas (0-50%)
+  // Datos para gráfico de líneas (0-30%)
   const lineChartData = useMemo(() => {
     const data = []
-    for (let i = 0; i <= 50; i += 2) {
+    for (let i = 0; i <= 30; i += 2) {
       const avoided = Math.round(inputs.annualFailedHearings * (i / 100))
       const savings =
         Math.round(avoided * inputs.averageCostPerHearing * 100) / 100
@@ -307,7 +307,7 @@ export default function EconomicImpact() {
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md mb-2"
               min="0"
-              max="50"
+              max="30"
               step="1"
             />
             <div className="flex gap-2">
